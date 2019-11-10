@@ -32,6 +32,7 @@ routes.put('/users', UserController.update);
 
 routes.post('/students', StudentController.store);
 routes.put('/students', StudentController.update);
+routes.get('/students', StudentController.index);
 routes.post('/students/:student_id/checkins', CheckinController.store);
 routes.get('/students/:student_id/checkins', CheckinController.index);
 routes.post('/students/help_orders', HelpOrderQuestionController.store);

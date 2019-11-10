@@ -58,7 +58,7 @@ class CheckinController {
         {
           model: Student,
           as: 'student',
-          attributes: ['nome'],
+          attributes: ['name'],
         },
       ],
     });

@@ -24,7 +24,7 @@ class HelpOrderAnswerController {
         {
           model: Student,
           as: 'student',
-          attributes: ['nome', 'email'],
+          attributes: ['name', 'email'],
         },
       ],
     });
@@ -50,7 +50,7 @@ class HelpOrderAnswerController {
         {
           model: Student,
           as: 'student',
-          attributes: ['nome', 'email'],
+          attributes: ['name', 'email'],
         },
       ],
     });

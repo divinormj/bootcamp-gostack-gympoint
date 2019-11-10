@@ -8,14 +8,12 @@ class HelpOrderAnswerMail {
   async handle({ data }) {
     const { helpOrder } = data;
 
-    console.log('A fila help executou');
-
     await Mail.sendMail({
-      to: `${helpOrder.student.nome}<${helpOrder.student.email}>`,
+      to: `${helpOrder.student.name}<${helpOrder.student.email}>`,
       subject: 'Resposta de pedido de auxílio',
       template: 'helpOrderAnswer',
       context: {
-        student: helpOrder.student.nome,
+        student: helpOrder.student.name,
         question: helpOrder.question,
         answer: helpOrder.answer,
       },

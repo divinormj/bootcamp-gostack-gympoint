@@ -38,7 +38,7 @@ class HelpOrderQuestionController {
         {
           model: Student,
           as: 'student',
-          attributes: ['nome', 'email'],
+          attributes: ['name', 'email'],
         },
       ],
     });

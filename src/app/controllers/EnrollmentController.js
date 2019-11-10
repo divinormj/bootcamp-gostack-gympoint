@@ -146,7 +146,10 @@ class EnrollmentController {
   }
 
   async index(req, res) {
-    const enrollments = await Enrollment.findAll({ order: ['start_date'] });
+    const enrollments = await Enrollment.findAll({
+      attributes: ['id', 'start_date', 'end_date', 'price', 'active'],
+      order: ['start_date'],
+    });
 
     return res.json(enrollments);
   }

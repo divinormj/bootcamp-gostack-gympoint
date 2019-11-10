@@ -10,15 +10,12 @@ class ConfirmEnrollmentMail {
 
   async handle({ data }) {
     const { enrollment, student, plan } = data;
-
-    console.log('A fila executou');
-
     await Mail.sendMail({
-      to: `${student.nome}<${student.email}>`,
+      to: `${student.name}<${student.email}>`,
       subject: 'Confirmação de Matrícula',
       template: 'confirmEnrollment',
       context: {
-        student: student.nome,
+        student: student.name,
         plan: plan.title,
         start_date: format(parseISO(enrollment.start_date), 'dd/MM/yyyy', {
           locale: pt,
