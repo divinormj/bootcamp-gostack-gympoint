@@ -7,8 +7,9 @@ import Student from '../models/Student';
 
 class CheckinController {
   async store(req, res) {
+    console.log(req.params);
     const schema = Yup.object().shape({
-      student_id: Yup.number()
+      id: Yup.number()
         .integer()
         .required(),
     });
@@ -17,10 +18,10 @@ class CheckinController {
       return res.status(400).json({ error: 'Checkin validation  fails.' });
     }
 
-    const studentExists = await Student.findByPk(req.params.student_id);
+    const studentExists = await Student.findByPk(req.params.id);
 
     if (!studentExists) {
-      return res.status(400).json({ error: 'Student already exists.' });
+      return res.status(401).json({ error: 'Student already exists.' });
     }
 
     const startDate = new Date();
@@ -39,21 +40,23 @@ class CheckinController {
     });
 
     if (checkins && checkins.length >= 5) {
-      return res.status(400).json({ error: 'Only 5 check-in allowed week.' });
+      return res.status(402).json({ error: 'Only 5 check-in allowed week.' });
     }
 
-    const checkin = await Checkin.create(req.params);
+    const checkin = await Checkin.create({
+      student_id: studentExists.id,
+    });
 
     return res.json(checkin);
   }
 
   async index(req, res) {
-    if (!req.params.student_id) {
-      return res.status(400).json({ error: 'Checkin validation  fails.' });
+    if (!req.params.id) {
+      return res.status(400).json({ error: 'Checkin validation fails.' });
     }
 
     const checkins = await Checkin.findAll({
-      where: { student_id: req.params.student_id },
+      where: { student_id: req.params.id },
       include: [
         {
           model: Student,
@@ -61,6 +64,7 @@ class CheckinController {
           attributes: ['name'],
         },
       ],
+      order: [['created_at', 'DESC']],
     });
 
     return res.json(checkins);

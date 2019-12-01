@@ -21,9 +21,11 @@ class PlanController {
     if (planExists) {
       return res.status(400).json({ error: 'Plan already exists.' });
     }
-    const { id, title, duration, price } = await Plan.create(req.body);
+    const { id, title, duration, price, total_price } = await Plan.create(
+      req.body
+    );
 
-    return res.json({ id, title, duration, price });
+    return res.json({ id, title, duration, price, total_price });
   }
 
   async update(req, res) {
@@ -55,9 +57,9 @@ class PlanController {
       }
     }
 
-    const { duration, price } = await plan.update(req.body);
+    const { duration, price, total_price } = await plan.update(req.body);
 
-    return res.json({ id, title, duration, price });
+    return res.json({ id, title, duration, price, total_price });
   }
 
   async delete(req, res) {
@@ -65,11 +67,11 @@ class PlanController {
       id: Yup.number().required(),
     });
 
-    if (!(await schema.isValid(req.params))) {
+    if (!(await schema.isValid(req.query))) {
       return res.status(400).json({ error: 'Validation fails.' });
     }
 
-    const plan = await Plan.findByPk(req.params.id);
+    const plan = await Plan.findByPk(req.query.id);
 
     if (!plan) {
       return res.status(400).json({ error: 'Plan does not exists.' });
@@ -81,9 +83,17 @@ class PlanController {
   }
 
   async index(req, res) {
-    const plans = await Plan.findAll({ order: ['duration'] });
+    const plans = await Plan.findAll({
+      order: ['duration'],
+    });
 
     return res.json(plans);
+  }
+
+  async show(req, res) {
+    const plan = await Plan.findByPk(req.params.id);
+
+    return res.json(plan);
   }
 }
 

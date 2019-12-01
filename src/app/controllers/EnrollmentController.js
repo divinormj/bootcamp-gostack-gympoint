@@ -130,11 +130,11 @@ class EnrollmentController {
       id: Yup.number().required(),
     });
 
-    if (!(await schema.isValid(req.params))) {
+    if (!(await schema.isValid(req.query))) {
       return res.status(400).json({ error: 'Validation fails.' });
     }
 
-    const enrollment = await Enrollment.findByPk(req.params.id);
+    const enrollment = await Enrollment.findByPk(req.query.id);
 
     if (!enrollment) {
       return res.status(400).json({ error: 'Enrollment does not exists.' });
@@ -145,9 +145,40 @@ class EnrollmentController {
     return res.json();
   }
 
+  async show(req, res) {
+    const enrollment = await Enrollment.findByPk(req.params.id, {
+      include: [
+        {
+          model: Student,
+          as: 'student',
+          attributes: ['id', 'name'],
+        },
+        {
+          model: Plan,
+          as: 'plan',
+          attributes: ['id', 'title'],
+        },
+      ],
+    });
+
+    return res.json(enrollment);
+  }
+
   async index(req, res) {
     const enrollments = await Enrollment.findAll({
       attributes: ['id', 'start_date', 'end_date', 'price', 'active'],
+      include: [
+        {
+          model: Student,
+          as: 'student',
+          attributes: ['id', 'name'],
+        },
+        {
+          model: Plan,
+          as: 'plan',
+          attributes: ['id', 'title'],
+        },
+      ],
       order: ['start_date'],
     });
 

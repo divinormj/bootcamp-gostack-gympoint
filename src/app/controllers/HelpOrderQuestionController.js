@@ -13,13 +13,13 @@ class HelpOrderQuestionController {
     });
 
     if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Help order validation  fails.' });
+      return res.status(401).json({ error: 'Help order validation  fails.' });
     }
 
     const student = await Student.findByPk(req.body.student_id);
 
     if (!student) {
-      return res.status(400).json({ error: 'Student does not exist.' });
+      return res.status(402).json({ error: 'Student does not exist.' });
     }
 
     const helpOrder = await HelpOrder.create(req.body);
@@ -28,12 +28,12 @@ class HelpOrderQuestionController {
   }
 
   async index(req, res) {
-    if (!req.params.student_id) {
+    if (!req.params.id) {
       return res.status(400).json({ error: 'Validation fails.' });
     }
 
     const helpOrders = await HelpOrder.findAll({
-      where: { student_id: req.params.student_id },
+      where: { student_id: req.params.id },
       include: [
         {
           model: Student,

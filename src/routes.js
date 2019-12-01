@@ -16,32 +16,43 @@ const routes = new Router();
 routes.post('/sessions', SessionController.store);
 routes.post('/users', UserController.store);
 
+/**
+ * O aluno não é autenicado,
+ * o checkin e pedidos de ajuda são feitos com base no ID.
+ */
+routes.get('/students/:id', StudentController.show);
+routes.post('/students/:id/checkins', CheckinController.store);
+routes.get('/students/:id/checkins', CheckinController.index);
+routes.post('/students/help_orders', HelpOrderQuestionController.store);
+routes.get('/students/:id/help_orders', HelpOrderQuestionController.index);
+
 routes.use(authMiddleware);
+
+routes.put('/users', UserController.update);
 
 routes.post('/enrollments', EnrollmentController.store);
 routes.put('/enrollments', EnrollmentController.update);
-routes.delete('/enrollments/:id', EnrollmentController.delete);
+routes.delete('/enrollments', EnrollmentController.delete);
+routes.get('/enrollments/:id', EnrollmentController.show);
 routes.get('/enrollments', EnrollmentController.index);
 
 routes.post('/plans', PlanController.store);
 routes.put('/plans', PlanController.update);
-routes.delete('/plans/:id', PlanController.delete);
+routes.delete('/plans', PlanController.delete);
+routes.get('/plans/:id', PlanController.show);
 routes.get('/plans', PlanController.index);
-
-routes.put('/users', UserController.update);
 
 routes.post('/students', StudentController.store);
 routes.put('/students', StudentController.update);
+routes.delete('/students', StudentController.delete);
 routes.get('/students', StudentController.index);
-routes.post('/students/:student_id/checkins', CheckinController.store);
-routes.get('/students/:student_id/checkins', CheckinController.index);
 routes.post('/students/help_orders', HelpOrderQuestionController.store);
 routes.get(
   '/students/:student_id/help_orders',
   HelpOrderQuestionController.index
 );
 
-routes.post('/help_orders/answer', HelpOrderAnswerController.store);
+routes.put('/help_orders', HelpOrderAnswerController.update);
 routes.get('/help_orders/no_reply', HelpOrderAnswerController.index);
 
 export default routes;

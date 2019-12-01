@@ -2,6 +2,7 @@ import * as Yup from 'yup';
 import { Op } from 'sequelize';
 
 import Student from '../models/Student';
+// import Enrollment from '../models/Enrollment';
 
 class StudentController {
   async store(req, res) {
@@ -38,8 +39,10 @@ class StudentController {
       id: Yup.number()
         .integer()
         .required(),
-      name: Yup.string(),
-      email: Yup.string().email(),
+      name: Yup.string().required('O nome deve ser informado.'),
+      email: Yup.string()
+        .email()
+        .required('O e-mail deve ser informado.'),
       age: Yup.number().integer(),
       height: Yup.number(),
       weight: Yup.number(),
@@ -69,12 +72,62 @@ class StudentController {
     return res.json({ id, name, email, age, height, weight });
   }
 
+  async delete(req, res) {
+    const schema = Yup.object().shape({
+      id: Yup.number().required(),
+    });
+
+    if (!(await schema.isValid(req.query))) {
+      return res.status(400).json({ error: 'O aluno deve ser informado.' });
+    }
+
+    const { id } = req.query;
+    const student = await Student.findByPk(id);
+
+    if (!student) {
+      return res.status(400).json({ error: 'O aluno não está cadastrado.' });
+    }
+
+    /* const countEnrollment = await Enrollment.count({ where: { student_id } });
+
+    if(countEnrollment > 1) {
+      return res.status(400).json({ error: 'O aluno já foi matriculado, seu registro não pode mais ser excluído.' });
+    } */
+
+    try {
+      await student.destroy();
+    } catch (err) {
+      if (JSON.stringify(err).search('ExecConstraints') > 0) {
+        return res
+          .status(400)
+          .send('O aluno já foi matriculado, não pode ser excluído.');
+      }
+
+      return res.status(400).send('Ocorreu uma falha ao excluir o aluno.');
+    }
+
+    return res.status(200).json('Registro excluído com sucesso!');
+  }
+
+  async show(req, res) {
+    const { id } = req.params;
+
+    const student = await Student.findByPk(id);
+
+    if (!student) {
+      return res.status(400).json({ error: 'O aluno não está cadastrado.' });
+    }
+
+    return res.json(student);
+  }
+
   async index(req, res) {
     const { student_name } = req.query;
+
     const students = await Student.findAll({
       where: {
         name: {
-          [Op.iLike]: `%${student_name}%`,
+          [Op.iLike]: `%${student_name || ''}%`,
         },
       },
       order: ['name'],
