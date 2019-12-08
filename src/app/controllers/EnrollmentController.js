@@ -76,20 +76,22 @@ class EnrollmentController {
       id: Yup.number()
         .integer()
         .required(),
-      plan_id: Yup.number().integer(),
-      start_date: Yup.date(),
+      plan_id: Yup.number()
+        .integer()
+        .required(),
+      start_date: Yup.date().required(),
     });
 
-    if (!(await schema.isValid(req.body))) {
+    if (!(await schema.isValid(req.body.enrollment))) {
       return res.status(400).json({ error: 'Validation fails.' });
     }
 
-    const { id, plan_id, start_date } = req.body;
+    const { id, plan_id, start_date } = req.body.enrollment;
 
     const enrollment = await Enrollment.findByPk(id);
 
     if (!enrollment) {
-      return res.status(400).json({ error: 'Enrollment does not exists.' });
+      return res.status(401).json({ error: 'Enrollment does not exists.' });
     }
 
     if (plan_id) {
@@ -100,7 +102,7 @@ class EnrollmentController {
       if (planExists) {
         enrollment.plan = planExists;
       } else {
-        return res.status(400).json({ error: 'Plan does not exists.' });
+        return res.status(402).json({ error: 'Plan does not exists.' });
       }
     }
 
@@ -156,7 +158,7 @@ class EnrollmentController {
         {
           model: Plan,
           as: 'plan',
-          attributes: ['id', 'title'],
+          attributes: ['id', 'title', 'duration', 'total_price'],
         },
       ],
     });

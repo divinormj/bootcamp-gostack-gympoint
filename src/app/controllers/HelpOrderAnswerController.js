@@ -8,6 +8,17 @@ import Student from '../models/Student';
 
 class HelpOrderAnswerController {
   async update(req, res) {
+    const schema = Yup.object().shape({
+      id: Yup.number()
+        .integer()
+        .required(),
+      answer: Yup.string().required(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Checkin validation fails.' });
+    }
+
     const helpOrder = await HelpOrder.findByPk(req.body.id, {
       include: [
         {
@@ -19,7 +30,7 @@ class HelpOrderAnswerController {
     });
 
     if (!helpOrder) {
-      return res.status(400).json({ error: 'Help does not exists.' });
+      return res.status(401).json({ error: 'Help does not exists.' });
     }
 
     helpOrder.answer = req.body.answer;

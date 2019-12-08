@@ -41,6 +41,7 @@ class HelpOrderQuestionController {
           attributes: ['name', 'email'],
         },
       ],
+      order: [['created_at', 'DESC']],
     });
 
     return res.json(helpOrders);

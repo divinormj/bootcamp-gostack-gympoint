@@ -10,6 +10,12 @@ class ConfirmEnrollmentMail {
 
   async handle({ data }) {
     const { enrollment, student, plan } = data;
+    // Create our number formatter.
+    const formatter = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    });
+
     await Mail.sendMail({
       to: `${student.name}<${student.email}>`,
       subject: 'Confirmação de Matrícula',
@@ -23,7 +29,7 @@ class ConfirmEnrollmentMail {
         end_date: format(parseISO(enrollment.end_date), 'dd/MM/yyyy', {
           locale: pt,
         }),
-        price: plan.price,
+        price: formatter.format(plan.price),
       },
     });
   }
